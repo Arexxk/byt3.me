@@ -1,0 +1,72 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="post-service/post-service.html">
+<link rel="import" href="post-card.html">
+
+<polymer-element name="post-list" attributes="query show">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    post-card {
+      width: 800px;
+      margin-bottom: 30px;
+    }
+    @media screen and (max-width: 880px) { 
+      post-card {
+        width: 420px;
+      }
+    }
+    @media screen and (max-width: 414px) { /* iPhone 6 Plus */
+      post-card {
+        width: 320px;
+      }
+    }
+    @media screen and (max-width: 320px) { /* iPhone 5 > */
+      post-card {
+        width: 240px;
+      }
+    }
+    </style>
+    <!-- add markup here -->
+    <post-service id="service" posts="{{posts}}" query="{{query}}">
+    </post-service>
+
+    <div layout vertical center>
+      <template repeat="{{post in posts}}">
+        <post-card
+          favorite="{{post.favorite}}"
+          on-favorite-tap="{{handleFavorite}}"
+          hidden?="{{show == 'favorites' && !post.favorite}}"
+          on-click="{{openLink}}"
+          href="{{post.url}}"
+          style="background-color:{{post.statusColor}};">
+
+          <!--img src="{{post.avatar}}" width="70" height="70">
+          <h2>{{post.username}}</h2>
+          <p>{{post.text}}</p-->
+          <h2>{{post.title}}</h2>
+          <template repeat="{{paragraph in post.paragraphs}}">
+            <p>{{paragraph}}</p>
+          </template>
+        </post-card>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      openLink: function(event, detail, sender) {
+      var url = sender.getAttribute("href");
+      if(url)
+        window.open(sender.getAttribute("href"));
+      },
+      handleFavorite: function(event, detail, sender) {
+        var post = sender.templateInstance.model.post;
+        this.$.service.setFavorite(post.uid, post.favorite);
+      }
+    });
+  </script>
+
+</polymer-element>

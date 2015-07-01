@@ -1,0 +1,220 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/core-toolbar/core-toolbar.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="app-globals.html">
+<link rel="import" href="login-overlay.html">
+<polymer-element name="my-toolbar" attributes="back">
+<template>
+<style class="cp-pen-styles">.loader {
+  position: relative;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-transform: rotate(165deg);
+}
+.loader:before, .loader:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 0.25em;
+  -webkit-transform: translate(-50%, -50%);
+}
+.loader:before {
+  -webkit-animation: before 2s infinite;
+}
+.loader:after {
+  -webkit-animation: after 2s infinite;
+}
+
+@-webkit-keyframes before {
+  0% {
+    width: 0.5em;
+    box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+  }
+  35% {
+    width: 2.5em;
+    box-shadow: 0 -0.5em rgba(225, 20, 98, 0.75), 0 0.5em rgba(111, 202, 220, 0.75);
+  }
+  70% {
+    width: 0.5em;
+    box-shadow: -1em -0.5em rgba(225, 20, 98, 0.75), 1em 0.5em rgba(111, 202, 220, 0.75);
+  }
+  100% {
+    box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+  }
+}
+@-webkit-keyframes after {
+  0% {
+    height: 0.5em;
+    box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+  }
+  35% {
+    height: 2.5em;
+    box-shadow: 0.5em 0 rgba(61, 184, 143, 0.75), -0.5em 0 rgba(233, 169, 32, 0.75);
+  }
+  70% {
+    height: 0.5em;
+    box-shadow: 0.5em -1em rgba(61, 184, 143, 0.75), -0.5em 1em rgba(233, 169, 32, 0.75);
+  }
+  100% {
+    box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+  }
+}
+/**
+ * Attempt to center the whole thing!
+ */
+html,
+body {
+  height: 100%;
+}
+
+.loader {
+  position: absolute;
+  top: calc(50% - 1.25em);
+  left: calc(50% - 1.25em);
+}
+</style>
+
+<style>
+host: {
+}
+core-toolbar {
+  background-color: #fdf6e3;
+  opacity: 0.8;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  color: gray;
+  /* Non-Chrome browsers have trouble with this */
+}
+paper-tab::shadow #ink {
+  color: #eee8d5;
+}
+paper-tabs::shadow #selectionBar {
+  background-color: #dc322f;
+  opacity: 0.5;
+}
+.title {
+  font-size: x-large;
+}
+.title0 {
+  color: #2aa198;
+  margin-right: -5px;
+}
+.title1 {
+  color: #dc322f;
+  font-size: xx-large;
+  font-weight: bolder;
+}
+.title2 {
+  color: #b58900;
+  margin-left: -5px;
+}
+.title3 {
+  color: rgb(147, 161, 161);
+}
+.title4 {
+  color: rgb(147, 161, 161);
+}
+@media(max-width: 640px) {
+  .title {
+    font-size: 15px;
+  }
+  .title1 {
+    font-size: 20px;
+  }
+}
+.fade {
+  opacity: 1;
+  transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -webkit-transition: opacity .5s ease-in-out;
+}
+</style>
+
+<app-globals id="appGlobals"
+             appPath={{appPath}} 
+             userObject={{userObject}} 
+             userPresent={{userPresent}}>
+</app-globals>
+
+<login-overlay>
+</login-overlay>
+
+<core-toolbar class="medium-tall">
+
+  <paper-icon-button id="navicon" icon="{{$.pages.selected != 0 ? 'arrow-back' : 'menu'}}" on-tap="{{backButtonHandler}}">
+  </paper-icon-button>
+
+  <span flex>
+    <span class="title title0">Alex </span>
+    <span class="title title1">@</span>
+    <span class="title title2">Byt3.Me</span>
+    <span class="title title3 fade" id="titlePath">{{appPath.value}}</span>
+    <span class="title title4">></span>
+  </span>
+
+
+
+<div class="loader"></div>
+
+  <paper-icon-button id="userbutton" on-tap="{{loginOverlayButtonHandler}}" icon="{{userPresent.value ? 'account-circle' : 'check-circle-blank'}}"></paper-icon-button>
+
+  <paper-tabs on-click="{{tabClicked}}" id="tabs" class="bottom fit">
+    <paper-tab>PROJECTS</paper-tab>
+    <paper-tab>FRIDGE</paper-tab>
+    <paper-tab>HOME</paper-tab>
+    <paper-tab>MAP</paper-tab>
+    <paper-tab>CLOSET</paper-tab>
+  </paper-tabs>
+  
+</core-toolbar>
+</template>
+<script>
+  Polymer('my-toolbar', {
+      tabClicked: function() {
+        this.$.titlePath.style.opacity = 0;
+        window.toolbar = this;
+        setTimeout(function(){
+          var poop = window.toolbar;
+          window.test = null;
+          switch(poop.$.tabs.selected) {
+            case 0:
+                poop.$.appGlobals.appPath.value = '~/projects/';
+                break;
+            case 1:
+                poop.$.appGlobals.appPath.value = '~/whats_in_my/fridge';
+                break;
+            case 2:
+                poop.$.appGlobals.appPath.value = '~';
+                break;
+            case 3:
+                poop.$.appGlobals.appPath.value = '~/geo/';
+                window.googleMap.resize();
+                break;
+            case 4:
+                poop.$.appGlobals.appPath.value = '~/whats_in_my/closet';
+                break;
+            default:
+                poop.$.appGlobals.appPath.value = '?';
+          }
+          poop.$.titlePath.style.opacity = 1;
+        },500)
+      },
+      loginOverlayButtonHandler: function(e) {
+        this.shadowRoot.querySelector("login-overlay").toggle();
+      },
+      backButtonHandler: function() {
+        this.fire('backButtonClicked');
+      },
+      ready: function() {
+        var tabs = this.shadowRoot.querySelector('paper-tabs');
+        var title_path_el = this.shadowRoot.querySelector("#title_path");
+      }
+    });
+</script>
+</polymer-element>

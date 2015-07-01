@@ -1,0 +1,105 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/core-item/core-item.html">
+<link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="bower_components/core-icons/core-icons.html">
+<link rel="import" href="app-globals.html">
+<link rel="import" href="post-list.html">
+<link rel="import" href="aboutme-list.html">
+<link rel="import" href="my-toolbar.html">
+<link rel="import" href="my-fridge.html">
+<link rel="import" href="my-closet.html">
+<link rel="import" href="my-map.html">
+<link rel="import" href="my-home.html">
+<link rel="import" href="my-projects.html">
+
+<polymer-element name="my-element">
+
+  <template>
+    <style>    
+      :host {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        top: 0px;
+        left: 0px;
+        /*
+        font-family: ff-din-web-pro-1, ff-din-web-pro-2, sans-serif;
+        */
+        font-family: RobotoDraft, sans-serif;
+      }
+      body {
+        font-family: sans-serif;
+        background-color: #fdf6e3;
+      }
+    .card {
+      height: 150px;
+      width: 150px;
+      cursor: default;
+
+      display: block;
+      position: relative;
+      background-color: #eee8d5;
+      padding: 20px;
+      border-radius: 1px;
+      font-size: 1.2rem;
+      font-weight: 300;
+      box-shadow: 5px 5px 0 0 lightgray;
+      margin-bottom: 10px;
+    }
+    .container {
+      margin-top: 160px;
+    }
+    </style>
+
+<!-------------------->
+<app-globals appPath={{appPath}}>
+</app-globals>
+
+<my-toolbar id="toolbar" back={{backAction}}>
+</my-toolbar>
+<!-------------------->
+
+<my-fridge id="myFridge"
+           hidden?="{{appPath.value !== '~/whats_in_my/fridge'}}"
+           backAction="{{backAction}}">
+</my-fridge>
+
+<my-closet id="myCloset"
+           hidden?="{{appPath.value !== '~/whats_in_my/closet'}}"
+           backAction="{{backAction}}">
+</my-closet>
+
+
+<my-projects id="myProjects"
+           hidden?="{{appPath.value !== '~/projects/'}}">
+</my-projects>
+
+<my-home id="myHome"
+           hidden?="{{appPath.value !== '~'}}">
+</my-home>
+
+<my-map id="myMap"
+           hidden?="{{appPath.value !== '~/geo/'}}">
+</my-map>
+
+  </template>
+  <script>
+    Polymer('my-element', {
+      tapHandler: function(e) {
+        this.shadowRoot.querySelector("login-overlay").toggle();
+      },
+      ready: function() {
+        //Register my-toolbar backButtonClicked handler
+        this.addEventListener('backButtonClicked', function(e) {
+          //TODO: BUILD A MULTIPLEXER
+          //For now apply onto which element is not hidden
+          this.$.myFridge.backAction();
+          this.$.myCloset.backAction();
+        });
+      }
+    });
+
+  </script>
+
+</polymer-element>

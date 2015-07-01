@@ -1,0 +1,33 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="post-card.html">
+<link rel="import" href="github-status-widget.html">
+<link rel="import" href="github-profile-card.html">
+<polymer-element name="github-item" attributes="username cycletime">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+      }
+      div {
+        height: 400px;
+        width: 100%;
+      }
+      post-card {
+        margin-bottom: 30px;
+        width: 100%;
+      }
+    </style>
+    <div horizontal layout>
+      <github-profile-card style="margin-right: 15px;">
+      </github-profile-card>
+      <github-status-widget  style="margin-left: 15px;"
+        username={{username}}
+        cycletime={{cycletime}}>
+      </github-status-widget>
+    </div>
+  </template>
+
+  <script>
+    Polymer({});
+  </script>
+</polymer-element>

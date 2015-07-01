@@ -1,0 +1,45 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/core-ajax/core-ajax.html">
+<polymer-element name="github-service" attributes="username profile events">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <core-ajax id="ajax"
+      auto
+      url="https://api.github.com/users/arexxk"
+      on-core-response="{{profile_loaded}}"
+      handleAs="json">
+    </core-ajax>
+    <core-ajax id="ajax"
+      auto
+      url="https://api.github.com/users/arexxk/events"
+      on-core-response="{{events_loaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer('github-service', {
+    created: function() {
+      this.profile = [];
+      this.events = [];
+    },
+    profile_loaded: function(e) {
+      // Make a copy of the loaded data
+      this.profile = this.$.ajax.response
+      console.log("profile LOADED!");
+      console.log(e);
+      console.log(this.profile);
+    },
+    events_loaded: function(e) {
+      // Make a copy of the loaded data
+      this.events = this.$.ajax.response.slice(0);
+      console.log("events LOADED!");
+      console.log(e);
+      console.log(this.events);
+    },
+  });
+  </script>
+</polymer-element>

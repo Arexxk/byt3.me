@@ -1,0 +1,251 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/core-animated-pages/core-animated-pages.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/core-icons/editor-icons.html">
+<link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="app-globals.html">
+<polymer-element name="my-fridge" attributes="show backAction">
+  <template>
+    <style>
+      host: {
+      }
+      body {
+        font-family: sans-serif;
+        background-color: #fdf6e3;
+      }
+    .card {
+      height: 150px;
+      width: 150px;
+      cursor: default;
+
+      display: block;
+      position: relative;
+      background-color: #eee8d5;
+      padding: 20px;
+      border-radius: 1px;
+      font-size: 1.2rem;
+      font-weight: 300;
+      box-shadow: 5px 5px 0 0 lightgray;
+      margin-bottom: 10px;
+    }
+    .container {
+      margin-top: 128px;
+    }
+    .view {
+      margin-top: 128px;
+      font-size: 150px;
+      background-color: #eee8d5;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+    }
+    .input
+    {
+      font-size: 24px;
+      width: auto;
+    }
+    .button
+    {
+      font-size: 24px;
+      width: auto;
+    }
+    </style>
+
+    <app-globals userPresent={{userPresent}}>
+    </app-globals>
+
+    <core-animated-pages flex 
+                         id="pages" 
+                         selected="0" 
+                         on-core-animated-pages-transition-end="{{transitionend}}" 
+                         transitions="cross-fade-all hero-transition">
+
+      <section vertical 
+               layout>
+        <div id="container" 
+             class="container" 
+             flex 
+             horizontal 
+             wrap 
+             around-justified 
+             layout 
+             hero-p>
+          <template repeat="{{item in items}}">
+            <div hidden?="{{item.attributes.isProtected && !userPresent.value}}" 
+                 class="card" 
+                 vertical 
+                 center 
+                 center-justified 
+                 layout 
+                 hero-id="item-{{item.attributes.index}}" 
+                 hero?="{{$.pages.selected === item.attributes.index + 1 || lastSelected === item.attributes.index + 1}}" 
+                 on-tap="{{selectView}}">
+              <span cross-fade>{{item.attributes.name}}</span>
+            </div>
+          </template>
+        </div>
+      </section>
+      <template repeat="{{item in items}}">
+        <section vertical layout>
+          <div class="view" 
+               flex 
+               vertical 
+               center 
+               layout 
+               hero-id="item-{{item.attributes.index}}" 
+               hero?="{{$.pages.selected === item.attributes.index + 1 || $.pages.selected === 0}}">
+              <span cross-fade>{{item.attributes.name}}</span>
+              <span cross-fade 
+                    hidden?="{{item.attributes.name === '+'}}">{{item.attributes.count}}</span>
+              <paper-input hidden?="{{item.attributes.name !== '+'}}" 
+                           id="{{'newItemName' + item.attributes.index}}" 
+                           class="input"
+                           label="New Item" 
+                           layout="" 
+                           vertical="">
+              </paper-input>
+              <paper-input hidden?="{{item.attributes.name !== '+'}}" 
+                           id="{{'newItemAmount' + item.attributes.index}}" 
+                           class="input"
+                           label="Amount" 
+                           layout="" 
+                           vertical="">
+              </paper-input>
+              <paper-button  hidden?="{{item.attributes.name !== '+'}}"
+                             id="{{'addNewItem' + item.attributes.index}}" 
+                             class="button"
+                             label="Add" 
+                             on-tap={{addNewItem}} 
+                             raisedButton>
+              </paper-button>
+              <paper-button  hidden?="{{!editMode}}"
+                             id="{{'removeItem' + item.attributes.index}}" 
+                             class="button"
+                             label="Remove" 
+                             on-tap={{removeItem}} 
+                             raisedButton>
+              </paper-button>
+              <paper-icon-button hidden?="{{item.attributes.name === '+' || !userPresent.value}}"
+                             id="{{'editItem' + item.attributes.index}}" 
+                             icon="editor:mode-edit"
+                             class="editButton"
+                             on-tap={{toggleEditMode}}
+                             style="width: 60px; height: 60px;">
+              </paper-icon--button>
+           </div>
+        </section>
+      </template>
+    </core-animated-pages>
+  </template>
+  <script>
+    Polymer('my-fridge', {
+      items: [],
+      editMode: false,
+      toggleEditMode: function() {
+        this.editMode = !this.editMode;
+      },
+      addNewItem: function(e) {
+        var i = e.target.templateInstance.model.item.attributes.index;
+        var newItemName = e.target.parentNode.querySelector("#newItemName" + i).value;
+        var newItemAmount = e.target.parentNode.querySelector("#newItemAmount" + i).value;
+
+        window.fridgeScope = this;
+        var FridgeItem = Parse.Object.extend("FridgeItem");
+        var fI = new FridgeItem();
+        fI.set("index", this.items.length);
+        fI.set("isProtected", false);
+        fI.set("name", newItemName);
+        fI.set("count", parseInt(newItemAmount));
+        fI.save(null, {
+            success: function(o) {
+              // The object was saved successfully.
+              console.log("FridgeItem save: success");
+              window.fridgeScope.refreshList();
+            },
+            error: function(o, error) {
+              // The save failed.
+              // error is a Parse.Error with an error code and message.
+              console.log("FridgeItem save: error " + error);
+              console.error(error);
+            }
+          });
+
+        e.target.parentNode.querySelector("#newItemName" + i).value = "";
+        e.target.parentNode.querySelector("#newItemAmount" + i).value = "";
+        this.backAction();
+      },
+      removeItem: function(e) {
+        var i = e.target.templateInstance.model.item.attributes.index;
+        var itemName = this.items[i].attributes.name;
+
+        window.fridgeScope = this;
+        var FridgeItem = Parse.Object.extend("FridgeItem");
+        var query = new Parse.Query(FridgeItem);
+        query.equalTo("name", itemName);
+        query.find({
+            success: function(o) {
+              //THIS IS A HACK
+              console.log(o);
+              o[0].destroy({
+                  success: function(oo) {
+                    console.log("FridgeItem remove: success");
+                    window.fridgeScope.refreshList();
+                  },
+                  error: function(oo, ee) {
+                    console.log("FridgeItem remove: error " + error);
+                    console.error(error);
+                  }
+              });
+            },
+            error: function(o, error) {
+              // The save failed.
+              // error is a Parse.Error with an error code and message.
+              console.log("FridgeItem remove: error " + error);
+              console.error(error);
+            }
+          });
+
+        this.backAction();
+      },
+      selectView: function(e) {
+        var i = e.target.templateInstance.model.item.attributes;
+        //this.$.pages.selected = this.items.indexOf(i) + 1;
+        this.$.pages.selected = i.index + 1;
+      },
+      backAction: function() {
+        this.lastSelected = this.$.pages.selected;
+        this.$.pages.selected = 0;
+      },
+      transitionend: function() {
+        if (this.lastSelected) {
+          this.lastSelected = null;
+        }
+      },
+      refreshList: function() {
+        window.fridgeScope = this;
+        var FridgeItem = Parse.Object.extend("FridgeItem");
+        query = new Parse.Query(FridgeItem);
+        query.ascending("name");
+        query.find({
+          success: function(o) {
+            window.fridgeScope.items = [];
+            window.fridgeScope.test = o;
+            for(var i = 0; i < o.length; i++) {
+              var item = o[i];
+              item.attributes.index = i;
+              window.fridgeScope.items.push(item);
+            }
+          },
+          error: function(object, error) {
+            // The object was not retrieved successfully.
+            // error is a Parse.Error with an error code and message.
+            console.log(error);
+          }
+        });
+      },
+      ready: function() {
+        this.refreshList();
+      }
+    });
+  </script>
+</polymer-element>

@@ -1,0 +1,27 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<polymer-element name="app-globals" attributes="userObject userPresent appPath">
+  <script>
+    (function() {
+      var appPath = {
+        value: "~",
+        reflect: true
+      };
+      var userObject = {
+        value: null,
+        reflect: true
+      };
+      var userPresent = {
+        value: false,
+        reflect: true
+      };
+
+      Polymer({
+        ready: function() {
+          this.appPath = appPath;
+          this.userObject = userObject;
+          this.userPresent = userPresent;
+        }
+      });
+    })();
+  </script>
+</polymer-element>

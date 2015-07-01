@@ -1,0 +1,124 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/core-overlay/core-overlay.html">
+<link rel="import" href="bower_components/core-transition/core-transition-css.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+<link rel="import" href="bower_components/font-roboto/roboto.html">
+<link rel="import" href="parse.html">
+<link rel="import" href="app-globals.html">
+
+<polymer-element name="login-overlay">
+  <template>
+    <style no-shim>
+      :host 
+      {
+      }
+    </style>
+
+    <app-globals id="appGlobals" 
+                 userObject={{userObject}} 
+                 userPresent={{userPresent}}>
+    </app-globals>
+
+    <core-overlay layered 
+                  backdrop 
+                  id="useroverlay" 
+                  class="dialog" 
+                  transition="core-transition-top">
+
+      <!-- place all overlay styles inside the overlay target -->
+      <style>
+        .dialog 
+        {
+          box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 13px;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          overflow: hidden;
+          background-color: white;
+          padding:30px 42px;
+          outline: 1px solid rgba(0,0,0,0.2);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .input
+        {
+          width: auto;
+        }
+        #useroverlay 
+        {
+          box-sizing: border-box;
+          text-align: center;
+          width: 300px;
+        }
+      </style>
+      <h2>
+      {{(!userPresent.value) ? "Pls login:" : "Logout?"}}
+      </h2>
+
+      <paper-input hidden?="{{userPresent.value}}" 
+                   id="usernameinput" 
+                   class="input"
+                   label="Username" 
+                   layout="" 
+                   vertical="">
+      </paper-input>
+      <paper-input hidden?="{{userPresent.value}}"
+                   id="passwordinput" 
+                   class="input"
+                   label="Password" 
+                   type="password" 
+                   layout="" 
+                   vertical="">
+      </paper-input>
+      <paper-button hidden?="{{userPresent.value}}"
+                    label="login" 
+                    on-tap={{login}} 
+                    raisedButton>
+      </paper-button>
+      <paper-button  hidden?="{{!userPresent.value}}"
+                     label="logout" 
+                     on-tap={{logout}} 
+                     raisedButton>
+      </paper-button>
+    </core-overlay>
+  </template>
+  <script>
+    Polymer('login-overlay', {
+        toggle: function() {
+          this.shadowRoot.querySelector("#useroverlay").toggle();
+        },
+        login: function(e) {
+          var username = this.$.usernameinput.value;
+          var password = this.$.passwordinput.value;
+          Parse.User.logIn(username, password, {
+            success: function(user) {
+              //In "window" context
+              var appGlobals = document.querySelector('app-globals');
+
+              // Do stuff after successful login.
+              appGlobals.userObject.value = Parse.User.current();
+              appGlobals.userPresent.value = (appGlobals.userPresent.value != null);
+              console.log("Successful login as: " + appGlobals.userObject.value.getUsername());
+            },
+            error: function(user, error) {
+              console.error(error);
+            }
+          });
+        },
+        logout: function(e) {
+          Parse.User.logOut();
+          this.$.appGlobals.userObject.value = Parse.User.current();
+          this.$.appGlobals.userPresent.value = false;
+        },
+        ready: function() {
+          Parse.initialize("q1X7S1yIozl6NgSQV2pFY5BpGfVepO8P19mXGVGX", "XNoOlyMgFTXuDt89ygkT10ESzxEl5MhFZqVDr1RF");
+          this.$.appGlobals.userObject.value = Parse.User.current();
+          this.$.appGlobals.userPresent.value = Parse.User.current() != null;
+          console.log("userObject: " + this.$.appGlobals.userObject.value);
+          console.log("userPresent: " + this.$.appGlobals.userPresent.value);
+        }
+    });
+  </script>
+</polymer-element>

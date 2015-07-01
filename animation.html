@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+
+  <script src="bower_components/platform/platform.js"></script>
+  <link href="bower_components/core-animated-pages/core-animated-pages.html" rel="import">
+  <link href="bower_components/core-animated-pages/transitions/cross-fade.html" rel="import">
+  <link href="bower_components/core-animated-pages/transitions/slide-from-right.html" rel="import">
+  <link rel="import" href="post-card.html">
+
+
+
+
+  <style>
+    body {
+      font-family: Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      margin: 0;
+    }
+
+    core-animated-pages {
+    }
+
+    section > div {
+      height: 100%;
+      color: white;
+    }
+
+  </style>
+
+</head>
+<body unresolved>
+  <select onchange="change();">
+    <option value="cross-fade-all" selected>cross-fade-all</option>
+    <option value="slide-from-right">slide-from-right</option>
+  </select>
+
+  <core-animated-pages onclick="stuff();" transitions="cross-fade-all">
+    <section>
+      <div layout vertical center center-justified style="background:red;">
+        <post-card>this</post-card>
+      </div>
+    </section>
+    <section>
+      <div layout vertical center center-justified style="background:red;">
+        <post-card>is</post-card>
+      </div>
+    </section>
+    <section>
+      <div layout vertical center center-justified style="background:red;">
+        <post-card>a</post-card>
+      </div>
+    </section>
+  </core-animated-pages>
+
+  <script>
+    function change() {
+      var s = document.querySelector('select');
+      document.querySelector('core-animated-pages').transitions = document.querySelector('select').options[s.selectedIndex].value;
+    }
+
+    var up = true;
+    var max = 4;
+    function stuff() {
+      var p = document.querySelector('core-animated-pages');
+      if (up && p.selected === max || !up && p.selected === 0) {
+        up = !up;
+      }
+      if (up) {
+        p.selected += 1;
+      } else {
+        p.selected -= 1;
+      }
+    }
+  </script>
+</body>
+</html>
