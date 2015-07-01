@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>unquote</title>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <script src="bower_components/platform/platform.js"></script>
+  <link rel="import" href="bower_components/font-roboto/roboto.html">
+<link rel="import" href="app-globals.html">
+  <link rel="import" href="my-element.html">
+  <style>
+  html,body {
+    height: 100%;
+    margin: 0;
+    background-color: #fdf6e3;
+    font-family: 'RobotoDraft', sans-serif;
+  }
+  </style>
+</head>
+
+<body unresolved touch-action="auto">
+  <app-globals id="appGlobals">
+  </app-globals>
+  <my-element></my-element>
+  <script>
+    (function() {
+        appGlobals = document.querySelector("#appGlobals");
+    })();
+  </script>
+</body>
+
+</html>

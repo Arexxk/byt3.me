@@ -1,0 +1,36 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="post-card.html">
+<link rel="import" href="aboutme-item.html">
+<link rel="import" href="github-item.html">
+
+<polymer-element name="aboutme-list">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    post-card {
+      margin-bottom: 30px;
+    }
+    </style>
+    
+    <div layout vertical center>
+        <aboutme-item>
+        </aboutme-item>
+        <github-item username="arexxk" cycleTime="3000"></github-item>
+
+      <div horizontal layout style="width: 100%">
+        <post-card>
+          <p>footer:</p>
+          <p>Crafted with love using pure organic Polymer.</p>
+        </post-card>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    Polymer({});
+  </script>
+
+</polymer-element>

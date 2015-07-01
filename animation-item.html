@@ -1,0 +1,56 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link href="bower_components/core-animated-pages/core-animated-pages.html" rel="import">
+<link href="bower_components/core-animated-pages/transitions/cross-fade.html" rel="import">
+<link href="bower_components/core-animated-pages/transitions/slide-from-right.html" rel="import">
+<link rel="import" href="post-card.html">
+
+<polymer-element name="animation-item">
+  <template>
+  <style>
+    :host {
+      width: 100%;
+    }
+
+    core-animated-pages {
+    }
+
+    section > div {
+      height: 100%;
+      color: white;
+    }
+
+  </style>
+
+  <core-animated-pages on-click="{{stuff}}" transitions="cross-fade-all">
+    <section>
+        <post-card>this</post-card>
+    </section>
+    <section>
+        <post-card>is</post-card>
+    </section>
+    <section>
+        <post-card>a</post-card>
+    </section>
+  </core-animated-pages>
+</template>
+
+  <script>
+    Polymer('animation-item', {
+      up: true,
+      max: 4,
+      stuff: function(e, d, s) {
+        console.log("PONG");
+
+        var p = this.shadowRoot.querySelector('core-animated-pages');
+        if (this.up && p.selected === this.max || !this.up && p.selected === 0) {
+          this.up = !this.up;
+        }
+        if (this.up) {
+          p.selected += 1;
+        } else {
+          p.selected -= 1;
+        }
+      }
+    });
+  </script>
+</polymer-element>

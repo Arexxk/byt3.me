@@ -1,0 +1,67 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link href="bower_components/core-animated-pages/core-animated-pages.html" rel="import">
+<link href="bower_components/core-animated-pages/transitions/cross-fade.html" rel="import">
+<link href="bower_components/core-animated-pages/transitions/slide-from-right.html" rel="import">
+<link rel="import" href="post-card.html">
+<link rel="import" href="github-service.html">
+<polymer-element name="github-status-widget" attributes="username cycletime">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        height: 330px;
+      }
+      core-animated-pages {
+        width: 100%;
+        height: 100%;
+      }
+      post-card {
+        width: 245px;
+        height: 100%;
+      }
+</style>
+<body>
+
+    <github-service username="{{username}}" 
+                    events="{{events}}">
+    </github-service>
+
+
+  <core-animated-pages on-click="{{cycleIt}}" transitions="cross-fade-all">
+    <template repeat="{{event in events}}">
+      <section>
+        <post-card>
+          <p>{{event.created_at}}</p>
+          <p>{{event.type}}</p>
+          <p>{{event.repo.url}}</p>
+        </post-card>
+      </section>
+    </template>
+  </core-animated-pages>
+
+  </template>
+
+  <script>
+    Polymer('github-status-widget', {
+      up: true,
+      max: 4,
+      cycletime: 1000,
+      cycleIt: function(e, d, s) {
+        console.log("PONG");
+
+        var p = this.shadowRoot.querySelector('core-animated-pages');
+        if (this.up && p.selected === this.max || !this.up && p.selected === 0) {
+          this.up = !this.up;
+        }
+        if (this.up) {
+          p.selected += 1;
+        } else {
+          p.selected -= 1;
+        }
+      },
+      domReady: function() {
+        setInterval(this.cycleIt.bind(this), this.cycletime);
+      }
+    });
+  </script>
+</polymer-element>

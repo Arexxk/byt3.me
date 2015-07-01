@@ -1,0 +1,92 @@
+<link rel="import" href="bower_components/core-drawer-panel/core-drawer-panel.html">
+<link rel="import" href="bower_components/core-menu/core-submenu.html">
+<link rel="import" href="bower_components/core-item/core-item.html">
+<link rel="import" href="bower_components/google-map/google-map.html">
+
+
+
+<polymer-element name="my-map">
+
+  <template>
+    <style>    
+      :host {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      #core_drawer_panel {
+        position: fixed;
+        margin-top:128px;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+      }
+      #section {
+        box-shadow: rgba(0, 0, 0, 0.0980392) 0px 2px 4px, rgba(0, 0, 0, 0.0980392) 0px 0px 3px;
+        background-color: rgb(250, 250, 250);
+      }
+      #section1 {
+        height: 100%;
+        box-sizing: border-box;
+        background-color: rgb(221, 221, 221);
+      }
+      #google_map {
+        width: 100%;
+        height: 100%;
+        display: block;
+        left: 0px;
+        top: 0px;
+        position: absolute;
+      }
+      #core_menu {
+        font-size: 16px;
+        left: 42px;
+        top: 22px;
+        position: absolute;
+      }
+    </style>
+    <core-drawer-panel transition id="core_drawer_panel" touch-action>
+      <section id="section" drawer>
+        <core-menu selected="1" selectedindex="1" id="core_menu">
+          <core-submenu opened active id="core_submenu" icon="home" label="Topics">
+            <core-item id="core_item" label="UC San Diego" horizontal center layout></core-item>
+          </core-submenu>
+          <core-submenu opened active id="core_submenu1" icon="settings" label="Favorites">
+            <core-item id="core_item2" label="Favorite 1" horizontal center layout></core-item>
+            <core-item id="core_item3" label="Favorite 2" horizontal center layout></core-item>
+            <core-item id="core_item4" label="Favorite 3" horizontal center layout></core-item>
+          </core-submenu>
+        </core-menu>
+      </section>
+      <section id="section1" main>
+        <google-map latitude="32.769869" 
+                    longitude="-117.156922"
+                    id="google_map" 
+                    fitToMarkers>
+          <google-map-marker id="ucsd_marker"
+                              latitude="32.88006" 
+                              longitude="-117.234013"
+                              selected
+                              title="UCSD! My Undergraduate College">
+                              <span>UCSD! My Undergraduate College</span>
+          </google-map-marker>
+        </google-map>
+      </section>
+    </core-drawer-panel>
+  </template>
+
+  <script>
+
+    Polymer('my-map', {
+      ready: function() {
+        console.log("ready test");
+        window.googleMap = this.$.google_map; //this is a hack, resize event bound to map button on title-bar
+        window.ucsd = this.$.ucsd_marker;
+      }
+    });
+
+  </script>
+
+</polymer-element>

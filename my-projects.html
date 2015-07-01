@@ -1,0 +1,35 @@
+<link rel="import" href="post-list.html">
+
+<polymer-element name="my-projects">
+
+  <template>
+    <style>    
+      :host {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      post-list {
+        margin-top: 150px;
+      }
+    </style>
+    <post-list query="ProjectItem" 
+               show="True">
+    </post-list>
+
+  </template>
+
+  <script>
+
+    Polymer('my-projects', {
+      ready: function() {
+        console.log("home module ready");
+      }
+    });
+
+  </script>
+
+</polymer-element>

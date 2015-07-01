@@ -1,0 +1,62 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="post-card.html">
+<link rel="import" href="github-service.html">
+<polymer-element name="github-status-widget" attributes="username cycletime">
+  <template>
+    <style>
+      :host {
+      }
+      post-card {
+        margin-bottom: 30px;
+        display: none;
+        opacity: 1;
+        /*transition: opacity .5s ease-in-out;
+        -moz-transition: opacity .5s ease-in-out;
+        -webkit-transition: opacity .5s ease-in-out;*/
+        transition: opacity 0.5s, height 0;
+      }
+      .fadein {
+        opacity: 1;
+        display: block;
+      }
+      .fadeout {
+        opacity: 0;
+        display: none;
+      }
+    </style>
+
+    <github-service username="{{username}}" 
+                    events="{{events}}">
+    </github-service>
+
+    </post-card>
+    <template repeat="{{event in events}}">
+      <post-card>
+        <p>{{event.created_at}}</p>
+        <p>{{event.type}}</p>
+        <p>{{event.repo.url}}</p>
+      </post-card>
+    </template>
+  </template>
+
+  <script>
+    Polymer({
+      index: 0,
+      cycletime: 1000,
+      list_node: null,
+      cycleIt: function() {
+        this.list_node = this.shadowRoot.querySelectorAll("post-card");
+        if(this.list_node[(this.index - 1) % this.list_node.length])
+          this.list_node[(this.index - 1) % this.list_node.length].className = "fadeout";
+        else
+          this.list_node[this.list_node.length - 1].className = "fadeout";
+        this.list_node[this.index].className = "fadein";
+        this.index = (this.index + 1) % this.list_node.length;
+        
+      },
+      domReady: function() {
+        setInterval(this.cycleIt.bind(this), this.cycletime);
+      }
+    });
+  </script>
+</polymer-element>

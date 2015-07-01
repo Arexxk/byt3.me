@@ -1,0 +1,88 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+
+<polymer-element name="post-card">
+  <template>
+    <style>
+    :host {
+      display: block;
+      position: relative;
+      /*background-color: white;*/
+      background-color: #eee8d5;
+      padding: 20px;
+      border-radius: 1px;
+      width: 100%;
+      font-size: 1.2rem;
+      font-weight: 300;
+      /*box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);*/
+      box-shadow: 5px 5px 0 0 lightgray;
+    }
+    .card-header {
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .inner {
+      width: 100%;
+      overflow:hidden;
+    }
+    polyfill-next-selector { content: '.card-header h3'; }
+    .card-header ::content h3 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 300;
+    }
+    polyfill-next-selector { content: '.card-header h2'; }
+    .card-header ::content h2 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 300;
+    }
+    polyfill-next-selector { content: '.card-header img'; }
+    .card-header ::content img {
+      height: 200px;
+      width: 200px;
+      margin: 20px;
+    }    
+    core-icon-button {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      fill: #636363;
+    }
+    </style>
+
+    <!-- CARD CONTENTS GO HERE -->
+  <div layout vertical center class="card-header" 
+    style="overflow: hidden;">
+    <div>
+      <div class="inner">
+        <content class="picture" select="img"></content>
+      </div>
+      <div class="inner">
+        <content class="name" select="h2"></content>
+      </div>
+      <div class="inner">
+        <content class="title" select="h3"></content>
+      </div>
+      <div class="inner">
+        <content></content>
+      </div>
+    </div>
+  </div>
+
+
+  </template>
+  <script>
+    Polymer({
+      publish: {
+        favorite: {
+          value: false,
+          reflect: true
+        }
+      },
+      favoriteTapped: function(event, detail, sender) {
+        this.favorite = !this.favorite;
+        this.fire('favorite-tap');
+      }
+    });
+  </script>
+</polymer-element>
